@@ -1,5 +1,5 @@
 {
-    "name": "davislar/AMQP",
+    "name": "davislar/amqp",
     "description": "AMQP queue",
     "type": "library",
     "license": "MIT",
