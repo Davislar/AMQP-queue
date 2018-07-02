@@ -10,6 +10,7 @@ AMQP queue
 
          [
               'pidDir' => '/var/www/Projects/test/AMQP-queue/runtime',
+              'amqp' => [
                   'host' => 'rmq.dzensteam.com',
                   'port' => 5672,
                   'vhost' => '/test',
