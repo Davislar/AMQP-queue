@@ -3,7 +3,7 @@ AMQP queue
 
 ### Install
 
-composer require davislar/amqp
+    composer require davislar/amqp
 
 
 ### Config
