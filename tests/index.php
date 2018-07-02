@@ -47,17 +47,6 @@ $app = new QueueController([
                 ]
             ]
         ]
-//        [
-//            'name' => 'test2',
-//            'enabled' => true,
-//            'queue' => 'test',
-//            'router' => [
-//                'delSteamFriend' => [
-//                    \Davislar\AMQP\tests\TestAction::class,
-//                    \Davislar\AMQP\tests\Test2Action::class
-//                ]
-//            ]
-//        ]
     ],
     'messengers' => [
         [
