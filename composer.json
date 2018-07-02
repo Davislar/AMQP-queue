@@ -1,0 +1,31 @@
+{
+    "name": "davislar/AMQP",
+    "description": "AMQP queue",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrew Nogenko",
+            "email": "nogenkoworkmail@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.0",
+        "enqueue/fs": "^0.8.0@dev",
+        "enqueue/amqp-lib": "^0.8.0@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Davislar\\AMQP\\": "",
+            "Davislar\\AMQP\\queue\\": "src/queue",
+            "Davislar\\AMQP\\queue\\consumer\\": "src/queue/consumer",
+            "Davislar\\AMQP\\queue\\producer\\": "src/queue/producer",
+            "Davislar\\AMQP\\queue\\router\\": "src/queue/router",
+            "Davislar\\AMQP\\messenger\\": "src/messenger",
+            "Davislar\\AMQP\\objects\\": "src/objects",
+            "Davislar\\AMQP\\interfaces\\": "src/interfaces",
+            "Davislar\\AMQP\\tests\\": "tests"
+        }
+    }
+}
