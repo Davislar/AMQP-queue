@@ -20,11 +20,10 @@ class QueueController
     {
         $this->stop = false;
         Config::setConfig($config);
-        MassageHandler::send('Set Config', 0, \Davislar\AMQP\messenger\MassageHandler::VERBOSE_NOTICE);
-//        var_dump(Config::getConfig());
     }
 
     /**
+     * @throws \Exception
      * @throws \Interop\Queue\Exception
      */
     public function start(){
