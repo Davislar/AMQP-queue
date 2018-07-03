@@ -1,6 +1,7 @@
 {
     "name": "davislar/amqp",
     "description": "AMQP queue",
+    "homepage": "https://github.com/Davislar/AMQP-queue",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -11,8 +12,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.3.0",
-        "enqueue/fs": "^0.8.0@dev",
+        "php": ">=5.4.0",
         "enqueue/amqp-lib": "^0.8.0@dev"
     },
     "autoload": {
@@ -22,9 +22,11 @@
             "Davislar\\AMQP\\queue\\consumer\\": "src/queue/consumer",
             "Davislar\\AMQP\\queue\\producer\\": "src/queue/producer",
             "Davislar\\AMQP\\queue\\router\\": "src/queue/router",
+            "Davislar\\AMQP\\queue\\traits\\": "src/queue/traits",
             "Davislar\\AMQP\\messenger\\": "src/messenger",
             "Davislar\\AMQP\\objects\\": "src/objects",
             "Davislar\\AMQP\\interfaces\\": "src/interfaces",
+            "Davislar\\AMQP\\exceptions\\": "src/exceptions",
             "Davislar\\AMQP\\tests\\": "tests"
         }
     }

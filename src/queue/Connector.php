@@ -5,7 +5,8 @@ namespace Davislar\AMQP\queue;
 
 use Davislar\AMQP\messenger\MassageHandler;
 use Davislar\AMQP\queue\consumer\Consumer;
-use Davislar\AMQP\queue\producer\ProducerController;
+use Davislar\AMQP\queue\consumer\ConsumerFacade;
+use Davislar\AMQP\queue\producer\ProducerFacade;
 use Enqueue\AmqpLib\AmqpConnectionFactory;
 use Enqueue\AmqpLib\AmqpConsumer;
 use Interop\Amqp\AmqpQueue;
@@ -28,9 +29,9 @@ class Connector
      */
     protected static $consumers;
     /**
-     * @var ProducerController
+     * @var ProducerFacade
      */
-    public static $producers;
+    public static $producer;
 
     /**
      * @return mixed
@@ -71,6 +72,9 @@ class Connector
      * @throws Exception
      */
     public static function getQueues($name = null){
+//        var_dump('name');
+//        var_dump($name);
+//        var_dump(self::$queues[$name]);
         if (is_null(self::$queues)){
             throw new Exception('Not set queues');
         }
@@ -98,7 +102,7 @@ class Connector
         return true;
     }
     protected static function createProducer($queue){
-        self::$producers = new ProducerController(self::$psrContext->createProducer());
+        self::$producer = self::$psrContext->createProducer();
     }
     public static function checkQeueus(){
         $queues = Config::getQueues();
@@ -233,5 +237,9 @@ class Connector
                 MassageHandler::send('Can\'t find cli_set_process_title or setproctitle function', 5000,  MassageHandler::VERBOSE_ERROR);
             }
         }
+    }
+
+    public static function getConnectionFacade(AmqpConsumer $consumer){
+        return new ConnectorFacade(new ConsumerFacade($consumer), new ProducerFacade());
     }
 }

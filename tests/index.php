@@ -11,22 +11,14 @@ use Davislar\AMQP\queue\QueueController;
 
 require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using
 
+/**
+ * Task data
+ * {"toroute":"manager","action":{"type":"delSteamFriend","data":{"userSteamId":"76561198384936205","false":true}}}
+ */
+
 $app = new QueueController([
     'pidDir' => '/var/www/Projects/test/AMQP-queue/runtime',
     'amqp' => [
-//        'host' => 'rmq.dzensteam.com',
-//        'port' => 5672,
-//        'login' => 'admin',
-//        'password' => 'time',
-//        'connectionTimeout' => 10000,
-//        'authMechanism' => 'AMQPLAIN',
-//        'routingKeyInPayload' => false,
-//        'deliveryTagInPayload' => false,
-//        'vhost' => '/test',
-//        'noDelay' => true,
-//        'ssl' => [
-//            'enabled' => false
-//        ]
         'host' => 'rmq.dzensteam.com',
         'port' => 5672,
         'vhost' => '/test',

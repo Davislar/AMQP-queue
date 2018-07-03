@@ -3,21 +3,41 @@
 namespace Davislar\AMQP\tests;
 
 
-use Davislar\AMQP\messenger\MassageHandler;
+use Davislar\AMQP\exceptions\QueueException;
 use Davislar\AMQP\interfaces\WorkInterface;
-use Interop\Amqp\Impl\AmqpMessage;
+use Davislar\AMQP\queue\ConnectorFacade;
+use Davislar\AMQP\queue\traits\Transfer;
+use Interop\Queue\PsrMessage;
 
 class TestAction implements WorkInterface
 {
-    public function execute($message, $transport)
+    use Transfer;
+
+    /**
+     * @param $message
+     * @return bool
+     * @throws QueueException
+     */
+    public function execute($message)
     {
-        var_dump($message);
-        var_dump($transport);
-        var_dump($message->action->data->false);
+        var_dump('TestAction');
         if ($message->action->data->false){
-            return false;
+            throw new QueueException('throw QueueException', 0);
         }
-        return ['data' => 'test'];
+        return true;
+    }
+
+    /**
+     * @param ConnectorFacade $connection
+     * @param $message
+     * @param QueueException $exception
+     * @return bool
+     * @throws \Interop\Queue\Exception
+     */
+    public function onError(ConnectorFacade $connection,PsrMessage $message, QueueException $exception){
+        $connection->consumer->reject($message);
+        $connection->producer->send($connection->consumer->getQueueName(), json_decode($message->getBody()));
+        return true;
     }
 
 
