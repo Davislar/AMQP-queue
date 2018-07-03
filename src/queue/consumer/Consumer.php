@@ -84,7 +84,6 @@ class Consumer extends AbstractConsumerController
             $this->resetTransportData($this->action);
             MassageHandler::send('Memory use at finish', 0, MassageHandler::VERBOSE_LOG);
             MassageHandler::send($this->memoryUsage(true), 0, MassageHandler::VERBOSE_LOG);
-            sleep(5);
         }
     }
 
