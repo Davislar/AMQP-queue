@@ -100,7 +100,7 @@ class Consumer extends AbstractConsumerController
      * @return mixed
      */
     protected function getWorkers($message){
-        return $this->router->getRout($message->action->type);
+        return $this->router->getRout($message->toroute);
     }
 
     /**
