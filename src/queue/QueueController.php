@@ -31,6 +31,9 @@ class QueueController
         $this->initializeMassagers(Config::getConfig('messengers'));
         MassageHandler::send('Initialize massage handler', 0, \Davislar\AMQP\messenger\MassageHandler::VERBOSE_NOTICE);
         try{
+            if (Config::getConfig('queues')){
+                $this->initializeAmqp(Config::getConfig());
+            }
             Connector::createConsumer();
             MassageHandler::send('Consumer created', 0, MassageHandler::VERBOSE_NOTICE);
 //            $this->run();
@@ -53,18 +56,26 @@ class QueueController
     }
 
     /**
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    protected function initializeAmqp($config){
+        Connector::initAmqp($config);
+        return true;
+    }
+
+    /**
      * @throws \Interop\Queue\Exception
      */
     protected function run(){
         $consumer = Connector::getConsumer('test');
-//        var_dump($consumer);
         while (!$this->stop){
             $this->message = $consumer->receive();
 
             MassageHandler::send('message', 0, MassageHandler::VERBOSE_LOG);
             MassageHandler::send($this->message->getBody(), 0, MassageHandler::VERBOSE_LOG);
             $consumer->acknowledge($this->message);
-//            sleep(3);
         }
     }
 

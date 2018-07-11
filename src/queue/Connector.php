@@ -9,6 +9,7 @@ use Davislar\AMQP\queue\consumer\ConsumerFacade;
 use Davislar\AMQP\queue\producer\ProducerFacade;
 use Enqueue\AmqpLib\AmqpConnectionFactory;
 use Enqueue\AmqpLib\AmqpConsumer;
+use Interop\Amqp\AmqpDestination;
 use Interop\Amqp\AmqpQueue;
 use Interop\Queue\Exception;
 use Enqueue\AmqpLib\AmqpContext;
@@ -241,5 +242,57 @@ class Connector
 
     public static function getConnectionFacade(AmqpConsumer $consumer){
         return new ConnectorFacade(new ConsumerFacade($consumer), new ProducerFacade());
+    }
+
+    public static function initAmqp($config){
+        $factory = new AmqpConnectionFactory($config['amqp']);
+        $psrContext = $factory->createContext();
+        $queues = self::initQueues($psrContext,$config['queues']);
+        if (isset($config['exchanges'])){
+            self::initExchanges($psrContext,$config['exchanges'], $queues);
+        }
+        return true;
+    }
+
+    protected static function initQueues($psrContext, $queuesConf){
+        $queues = [];
+        foreach ($queuesConf as $queue){
+            $fooQueue = $psrContext->createQueue($queue['name']);
+            if (isset($queue['flags'])){
+                foreach ($queue['flags'] as $flag){
+                    $fooQueue->addFlag($flag);
+                }
+            }
+            if (isset($queue['arguments'])){
+                $fooQueue->setArguments($queue['arguments']);
+            }
+            $psrContext->declareQueue($fooQueue);
+            $queues[$queue['name']] = $fooQueue;
+        }
+        return $queues;
+    }
+
+    protected static function initExchanges($psrContext, $exchangesConf, $queues){
+        foreach ($exchangesConf as $exchange){
+            $fooTopic = $psrContext->createTopic($exchange['name']);
+            if (isset($exchange['flags'])){
+                foreach ($exchange['flags'] as $flag){
+                    $fooTopic->addFlag($flag);
+                }
+            }
+            if (isset($exchange['arguments'])){
+                $fooTopic->setArguments($exchange['arguments']);
+            }
+
+            $psrContext->declareTopic($fooTopic);
+            if (isset($exchange['binds'])){
+                foreach ($exchange['binds'] as $bind){
+                    if (isset($queues[$bind['queue']]) && ($queues[$bind['queue']] instanceof AmqpDestination)){
+                        $psrContext->bind(new \Interop\Amqp\Impl\AmqpBind($fooTopic, $queues[$bind['queue']], (isset($bind['key'])?$bind['key']:null)));
+                    }
+                }
+            }
+        }
+        return $queues;
     }
 }

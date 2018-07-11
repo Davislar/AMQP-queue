@@ -43,6 +43,7 @@ class MassageHandler
     }
 
     public static function send($msg, $code, $level){
+        var_dump(self::$messengers);
         foreach (self::$messengers as $messenger){
             if ($messenger->verbose($level)){
                 $messenger->send($msg, $code, $level);
