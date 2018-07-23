@@ -43,7 +43,6 @@ class Connector
             throw new Exception('Not set consumer');
         }
         if (!is_null($name)){
-            var_dump($name);
             return self::$consumers[$name];
         }
         return self::$consumers;
@@ -113,7 +112,6 @@ class Connector
             self::$psrContext->declareQueue($fooQueue);
             self::$queues[$queue] = $fooQueue;
         }
-        var_dump($queues);
         return true;
     }
 

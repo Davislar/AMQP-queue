@@ -20,7 +20,6 @@ class TestAction implements WorkInterface
      */
     public function execute($message)
     {
-        var_dump('TestAction');
         if ($message->action->data->false){
             throw new QueueException('throw QueueException', 0);
         }
