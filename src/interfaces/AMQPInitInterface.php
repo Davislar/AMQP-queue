@@ -45,10 +45,11 @@ interface AMQPInitInterface
         ARGUMENT_MAX_LENGTH_BYTES = 'x-max-length-bytes',
         ARGUMENT_DEAD_LETTER_EXCHANGE = 'x-dead-letter-exchange',
         ARGUMENT_DEAD_LETTER_ROUTE_KEY = 'x-dead-letter-routing-key',
-        ARGUMENT_MAX_PRIORITY = 'x-max-priority'
-    ;
+        ARGUMENT_MAX_PRIORITY = 'x-max-priority';
 
     public function init($config);
+
     public function initQueues($config);
+
     public function initExchanges($config);
 }

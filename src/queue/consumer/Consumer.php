@@ -37,7 +37,7 @@ class Consumer extends AbstractConsumerController
      * Consumer constructor.
      * @param $pidJob
      * @param $consumer
-     * @throws \Interop\Queue\Exception
+     * @throws \Exception
      */
     public function __construct($pidJob, $consumer)
     {
@@ -51,33 +51,34 @@ class Consumer extends AbstractConsumerController
     /**
      * @throws \Interop\Queue\Exception
      */
-    public function runJob(){
-        while (!$this->stop){
+    public function runJob()
+    {
+        while (!$this->stop) {
             $message = $this->getMessage();
-            MassageHandler::send('Memory use at start', 0, MassageHandler::VERBOSE_LOG);
-            MassageHandler::send($this->memoryUsage(true), 0, MassageHandler::VERBOSE_LOG);
-            MassageHandler::send('message', 0, MassageHandler::VERBOSE_LOG);
-            MassageHandler::send($this->message->getBody(), 0, MassageHandler::VERBOSE_LOG);
+            MassageHandler::send('Memory use at start', 0, MassageHandler::VERBOSE_NOTICE);
+            MassageHandler::send($this->memoryUsage(true), 0, MassageHandler::VERBOSE_NOTICE);
+            MassageHandler::send('message', 0, MassageHandler::VERBOSE_NOTICE);
+            MassageHandler::send($this->message->getBody(), 0, MassageHandler::VERBOSE_NOTICE);
             $workers = $this->getWorkers($message);
-            foreach ($workers as $worker){
+            foreach ($workers as $worker) {
                 $this->action = new $worker();
                 $this->initTransferData($this->action);
-                try{
+                try {
                     $result = $this->action->execute($message);
-                }catch (QueueException $exception){
+                } catch (QueueException $exception) {
                     MassageHandler::send($exception->getMessage(), 0, MassageHandler::VERBOSE_ERROR);
                     DataTransport::setException($exception);
                     $result = false;
                 }
-                if ($result === false){
+                if ($result === false) {
                     MassageHandler::send('Continue work', 0, MassageHandler::VERBOSE_ERROR);
                     break;
                 }
             }
-            if ($result !== false){
+            if ($result !== false) {
                 $this->consumer->acknowledge($this->message);
             }
-            if ($result === false){
+            if ($result === false) {
                 MassageHandler::send('Init on error', 0, MassageHandler::VERBOSE_ERROR);
                 $this->onError($this->action);
             }
@@ -90,7 +91,8 @@ class Consumer extends AbstractConsumerController
     /**
      * @return array
      */
-    protected function getMessage(){
+    protected function getMessage()
+    {
         $this->message = $this->consumer->receive();
         return json_decode($this->message->getBody());
     }
@@ -99,7 +101,8 @@ class Consumer extends AbstractConsumerController
      * @param $message
      * @return mixed
      */
-    protected function getWorkers($message){
+    protected function getWorkers($message)
+    {
         return $this->router->getRout($message->toroute);
     }
 
@@ -107,8 +110,9 @@ class Consumer extends AbstractConsumerController
      * @param $action
      * @return bool
      */
-    protected function initTransferData($action){
-        if (method_exists($action, 'initTransfer')){
+    protected function initTransferData($action)
+    {
+        if (method_exists($action, 'initTransfer')) {
             $action->initTransfer();
             MassageHandler::send('Init transfer data', 0, MassageHandler::VERBOSE_LOG);
         }
@@ -119,10 +123,11 @@ class Consumer extends AbstractConsumerController
      * @param $action
      * @return bool
      */
-    protected function resetTransportData($action){
-        if (method_exists($action, 'resetTransportData')){
+    protected function resetTransportData($action)
+    {
+        if (method_exists($action, 'resetTransportData')) {
             $action->resetTransportData();
-        }else{
+        } else {
             DataTransport::resetTransportData();
         }
         MassageHandler::send('Reset transport data', 0, MassageHandler::VERBOSE_LOG);
@@ -134,12 +139,13 @@ class Consumer extends AbstractConsumerController
      * @return bool
      * @throws \Interop\Queue\Exception
      */
-    protected function onError($action){
+    protected function onError($action)
+    {
         MassageHandler::send('protected function onError', 0, MassageHandler::VERBOSE_LOG);
-        if (method_exists($action, 'onError')){
+        if (method_exists($action, 'onError')) {
             MassageHandler::send('Init onError method', 0, MassageHandler::VERBOSE_LOG);
             $action->onError(Connector::getConnectionFacade($this->consumer), $this->message, DataTransport::getException());
-        }else{
+        } else {
             Connector::$producer->send($this->consumer->getQueue()->getQueueName(), $this->getMessage());
             MassageHandler::send('message', 0, MassageHandler::VERBOSE_LOG);
             $this->consumer->reject($this->message);
@@ -152,7 +158,8 @@ class Consumer extends AbstractConsumerController
      * @param bool $real_usage
      * @return int
      */
-    protected function memoryUsage($real_usage = false){
+    protected function memoryUsage($real_usage = false)
+    {
         return memory_get_usage($real_usage);
     }
 

@@ -12,8 +12,7 @@ class MassageHandler
         VERBOSE_ERROR = 'ERROR',
         VERBOSE_DEBUG = 'DEBUG',
         VERBOSE_NOTICE = 'NOTICE',
-        VERBOSE_WARNING = 'WARNING'
-    ;
+        VERBOSE_WARNING = 'WARNING';
 
     /**
      * @var array
@@ -26,8 +25,8 @@ class MassageHandler
      */
     public static function setMessengers(array $messengers)
     {
-        foreach ($messengers as $messenger){
-            if (!is_array($messenger) || !isset($messenger['class']) || !isset($messenger['config'])){
+        foreach ($messengers as $messenger) {
+            if (!is_array($messenger) || !isset($messenger['class']) || !isset($messenger['config'])) {
                 throw new \Exception('Not valid config MassageHandler');
             }
             $messengerObj = new $messenger['class']($messenger['config']);
@@ -38,13 +37,20 @@ class MassageHandler
     /**
      * @param MessengerInterface $messenger
      */
-    protected static function addMessenger(MessengerInterface $messenger){
+    protected static function addMessenger(MessengerInterface $messenger)
+    {
         self::$messengers[] = $messenger;
     }
 
-    public static function send($msg, $code, $level){
-        foreach (self::$messengers as $messenger){
-            if ($messenger->verbose($level)){
+    /**
+     * @param $msg
+     * @param $code
+     * @param $level
+     */
+    public static function send($msg, $code, $level)
+    {
+        foreach (self::$messengers as $messenger) {
+            if ($messenger->verbose($level)) {
                 $messenger->send($msg, $code, $level);
             }
         }

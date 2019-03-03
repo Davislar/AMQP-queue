@@ -16,11 +16,12 @@ class ProducerFacade
      * @return bool
      * @throws \Interop\Queue\Exception
      */
-    public function send($queue, $message){
-        if ($message instanceof \stdClass){
+    public function send($queue, $message)
+    {
+        if ($message instanceof \stdClass) {
             $message = Connector::getConnection()->createMessage(json_encode($message));
         }
-        if ($message instanceof PsrMessage){
+        if ($message instanceof PsrMessage) {
             Connector::$producer->send($this->getQueueByName($queue), $message);
         }
         return true;
@@ -28,10 +29,11 @@ class ProducerFacade
 
     /**
      * @param $queue
-     * @return mixed
-     * @throws \Interop\Queue\Exception
+     * @return \Interop\Amqp\AmqpQueue
+     * @throws \Exception
      */
-    public function getQueueByName($queue){
+    public function getQueueByName($queue)
+    {
         return Connector::getQueues($queue);
     }
 }

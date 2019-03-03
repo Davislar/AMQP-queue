@@ -7,6 +7,7 @@ use Davislar\AMQP\exceptions\QueueException;
 use Davislar\AMQP\interfaces\WorkInterface;
 use Davislar\AMQP\queue\ConnectorFacade;
 use Davislar\AMQP\queue\traits\Transfer;
+use Interop\Amqp\AmqpMessage;
 use Interop\Queue\PsrMessage;
 
 class TestAction implements WorkInterface
@@ -33,7 +34,7 @@ class TestAction implements WorkInterface
      * @return bool
      * @throws \Interop\Queue\Exception
      */
-    public function onError(ConnectorFacade $connection,PsrMessage $message, QueueException $exception){
+    public function onError(ConnectorFacade $connection,AmqpMessage $message, QueueException $exception){
         $connection->consumer->reject($message);
         $connection->producer->send($connection->consumer->getQueueName(), json_decode($message->getBody()));
         return true;

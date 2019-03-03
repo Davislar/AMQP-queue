@@ -6,7 +6,11 @@ namespace Davislar\AMQP\queue\router;
 class TransferFacade
 {
 
-    public function getData(){
+    /**
+     * @return array
+     */
+    public function getData()
+    {
         return DataTransport::getData();
     }
 
@@ -14,12 +18,17 @@ class TransferFacade
      * @param $data
      * @return bool
      */
-    public function giveData($data){
+    public function giveData($data)
+    {
         DataTransport::giveData($data);
         return true;
     }
 
-    public function resetTransportData(){
+    /**
+     * @return bool
+     */
+    public function resetTransportData()
+    {
         DataTransport::resetTransportData();
         return true;
     }

@@ -12,12 +12,17 @@ trait Transfer
      */
     protected $transfer;
 
-    public function initTransfer(){
+    public function initTransfer()
+    {
         $this->transfer = new TransferFacade();
         return true;
     }
 
-    public function resetTransportData(){
+    /**
+     * @return bool
+     */
+    public function resetTransportData()
+    {
         $this->transfer->resetTransportData();
         return true;
     }
