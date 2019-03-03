@@ -3,9 +3,8 @@
 namespace Davislar\AMQP\queue\consumer;
 
 
-use Davislar\AMQP\queue\Connector;
 use Enqueue\AmqpLib\AmqpConsumer;
-use Enqueue\AmqpLib\AmqpProducer;
+use Interop\Amqp\AmqpMessage;
 use Interop\Queue\PsrMessage;
 
 class ConsumerFacade
@@ -78,11 +77,11 @@ class ConsumerFacade
     }
 
     /**
-     * @param PsrMessage $message
+     * @param AmqpMessage $message
      * @param bool $requeue
      * @return bool
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(AmqpMessage $message, $requeue = false)
     {
         $this->consumer->reject($message, $requeue);
         return true;

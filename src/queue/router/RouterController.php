@@ -16,8 +16,13 @@ class RouterController
         $this->routerConfig = $routerConfig;
     }
 
-    public function getRout($rout){
-        return $this->routerConfig[$rout];
+    /**
+     * @param $rout
+     * @return array
+     */
+    public function getRout($rout)
+    {
+        return isset($this->routerConfig[$rout]) ? $this->routerConfig[$rout] : [];
     }
 
 }

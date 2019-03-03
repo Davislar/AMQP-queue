@@ -17,7 +17,8 @@ class DataTransport
     protected static $exception;
 
 
-    public static function getData(){
+    public static function getData()
+    {
         return self::$transportData;
     }
 
@@ -25,9 +26,10 @@ class DataTransport
      * @param $data
      * @return bool
      */
-    public static function giveData($data){
-        if (is_array($data)){
-            foreach ($data as $key => $value){
+    public static function giveData($data)
+    {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
                 self::$transportData[$key] = $value;
             }
         }
@@ -37,7 +39,8 @@ class DataTransport
     /**
      * @return bool
      */
-    public static function resetTransportData(){
+    public static function resetTransportData()
+    {
         self::$transportData = array();
         self::$exception = null;
         return true;
@@ -46,7 +49,8 @@ class DataTransport
     /**
      * @return mixed
      */
-    public static function getException(){
+    public static function getException()
+    {
         return self::$exception;
     }
 
@@ -54,7 +58,8 @@ class DataTransport
      * @param $exception
      * @return bool
      */
-    public static function setException(QueueException $exception){
+    public static function setException(QueueException $exception)
+    {
         self::$exception = $exception;
         return true;
     }

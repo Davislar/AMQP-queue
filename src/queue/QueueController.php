@@ -9,13 +9,21 @@ use Interop\Amqp\Impl\AmqpMessage;
 class QueueController
 {
 
-    protected $router;
+    /**
+     * Flag for stop process
+     * @var bool
+     */
     protected $stop;
     /**
      * @var AmqpMessage
      */
     protected $message;
 
+    /**
+     * QueueController constructor.
+     *
+     * @param $config
+     */
     public function __construct($config)
     {
         $this->stop = false;
@@ -23,20 +31,21 @@ class QueueController
     }
 
     /**
+     * Start initialize AMQP
+     *
      * @throws \Exception
-     * @throws \Interop\Queue\Exception
      */
-    public function start(){
-        $this->initializeMassagers(Config::getConfig('messengers'));
-        MassageHandler::send('Initialize massage handler', 0, \Davislar\AMQP\messenger\MassageHandler::VERBOSE_NOTICE);
-        try{
-            if (Config::getConfig('queues')){
+    public function init()
+    {
+        $this->initializeMessengers(Config::getConfig('messengers'));
+
+        try {
+            if (Config::getConfig('queues')) {
                 $this->initializeAmqp(Config::getConfig());
             }
-            Connector::createConsumer();
-            MassageHandler::send('Consumer created', 0, MassageHandler::VERBOSE_NOTICE);
-//            $this->run();
-        }catch (\Exception $exception){
+
+
+        } catch (\Exception $exception) {
             MassageHandler::send('start', $exception->getCode(), MassageHandler::VERBOSE_ERROR);
             MassageHandler::send($exception->getMessage(), $exception->getCode(), MassageHandler::VERBOSE_ERROR);
             MassageHandler::send($exception->getFile(), $exception->getCode(), MassageHandler::VERBOSE_ERROR);
@@ -45,54 +54,56 @@ class QueueController
     }
 
     /**
+     * Start consumers
      *
+     * @throws \Interop\Queue\Exception
+     */
+    public function run()
+    {
+        try {
+
+            MassageHandler::send('Create consumers ', 0, MassageHandler::VERBOSE_NOTICE);
+
+
+            Connector::createConsumers();
+
+            MassageHandler::send('Consumers created', 0, MassageHandler::VERBOSE_NOTICE);
+        } catch (\Exception $exception) {
+
+            MassageHandler::send('ERROR Code: ', $exception->getCode(), MassageHandler::VERBOSE_ERROR);
+            MassageHandler::send($exception->getMessage(), $exception->getCode(), MassageHandler::VERBOSE_ERROR);
+            MassageHandler::send($exception->getFile(), $exception->getCode(), MassageHandler::VERBOSE_ERROR);
+            MassageHandler::send($exception->getLine(), $exception->getCode(), MassageHandler::VERBOSE_ERROR);
+        }
+
+    }
+
+    /**
+     * Initialize messengers
+     *
+     * @param $config
      * @return bool
      * @throws \Exception
      */
-    protected function initializeMassagers($config){
+    protected function initializeMessengers($config)
+    {
+        MassageHandler::send('Initialize massage handler', 0, MassageHandler::VERBOSE_NOTICE);
         MassageHandler::setMessengers($config);
         return true;
     }
 
     /**
+     * Initialize Amqp
      *
      * @return bool
      * @throws \Exception
      */
-    protected function initializeAmqp($config){
-        Connector::initAmqp($config);
-        return true;
-    }
-
-    /**
-     * @throws \Interop\Queue\Exception
-     */
-    protected function run(){
-        $consumer = Connector::getConsumer('test');
-        while (!$this->stop){
-            $this->message = $consumer->receive();
-
-            MassageHandler::send('message', 0, MassageHandler::VERBOSE_LOG);
-            MassageHandler::send($this->message->getBody(), 0, MassageHandler::VERBOSE_LOG);
-            $consumer->acknowledge($this->message);
-        }
-    }
-
-    /**
-     * Set new process name
-     */
-    protected function changeProcessName($name)
+    protected function initializeAmqp($config)
     {
-        //rename process
-        if (version_compare(PHP_VERSION, '5.5.0') >= 0) {
-            cli_set_process_title($this->config->name);
-        } else {
-            if (function_exists('setproctitle')) {
-                setproctitle($this->config->name);
-            } else {
-                ConsoleHelper::consolePrint(5000, 'Can\'t find cli_set_process_title or setproctitle function', ConsoleHelper::BG_RED);
-            }
-        }
+        MassageHandler::send('Start initialize Amqp', 0, MassageHandler::VERBOSE_LOG);
+        Connector::initAmqp($config);
+        MassageHandler::send('Success initialize Amqp', 0, MassageHandler::VERBOSE_LOG);
+        return true;
     }
 
 }
