@@ -19,13 +19,13 @@ require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using
  */
 
 $app = new QueueController([
-    'pidDir' => '/var/www/Projects/test/AMQP-queue/runtime',
+    'pidDir' => '/var/www/AMQP-queue/runtime',
     'amqp' => [
-        'host' => 'rmq.dzensteam.com',
-        'port' => 5672,
-        'vhost' => '/test',
-        'user' => 'admin',
-        'pass' => 'time',
+        'host' => 'localhost',
+        'port' => 5670,
+        'vhost' => '/',
+        'user' => 'guest',
+        'pass' => 'guest',
         'persisted' => false,
         'connection_timeout' => 10000,
     ],
@@ -35,9 +35,6 @@ $app = new QueueController([
             'flags' => [
                 AMQPInitInterface::FLAG_DURABLE
             ],
-            'arguments' => [
-                AMQPInitInterface::ARGUMENT_MAX_LENGTH => 20000
-            ]
         ],
         [
             'name' => '222',
@@ -72,11 +69,11 @@ $app = new QueueController([
     ],
     'consumers' => [
         [
-            'name' => 'test',
+            'name' => 'testName',
             'enabled' => true,
-            'queue' => 'test',
+            'queue' => '111',
             'router' => [
-                'delSteamFriend' => [
+                'manager' => [
                     \Davislar\AMQP\tests\TestAction::class,
                     \Davislar\AMQP\tests\Test2Action::class
                 ]
@@ -98,7 +95,9 @@ $app = new QueueController([
     ]
 ]);
 
-$app->start();
+
+$app->init();
+$app->run();
 
 
 

@@ -29,8 +29,8 @@ class ConnectorFacade
     }
 
     /**
-     * @return mixed
-     * @throws \Interop\Queue\Exception
+     * @return \Enqueue\AmqpLib\AmqpContext
+     * @throws \Exception
      */
     public function getConnection()
     {

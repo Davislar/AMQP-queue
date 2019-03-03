@@ -58,41 +58,56 @@ class ConsoleHandler implements MessengerInterface
      * @param $level
      * @return int
      */
-    protected function getColorByLevel($level){
-        switch ($level){
-            case MassageHandler::VERBOSE_LOG:{
-                $color = self::FG_GREEN;
-                break;
-            }
-            case MassageHandler::VERBOSE_WARNING:{
-                $color = self::BG_RED;
-                break;
-            }
-            case MassageHandler::VERBOSE_ERROR:{
-                $color = self::BG_RED;
-                break;
-            }
-            case MassageHandler::VERBOSE_NOTICE:{
-                $color = self::BG_GREY;
-                break;
-            }
-            case MassageHandler::VERBOSE_DEBUG:{
-                $color = self::BG_YELLOW;
-                break;
-            }
-            default:{
-                $color = self::BG_GREY;
-            }
+    protected function getColorByLevel($level)
+    {
+        switch ($level) {
+            case MassageHandler::VERBOSE_LOG:
+                {
+                    $color = self::FG_GREEN;
+                    break;
+                }
+            case MassageHandler::VERBOSE_WARNING:
+                {
+                    $color = self::BG_RED;
+                    break;
+                }
+            case MassageHandler::VERBOSE_ERROR:
+                {
+                    $color = self::BG_RED;
+                    break;
+                }
+            case MassageHandler::VERBOSE_NOTICE:
+                {
+                    $color = self::BG_GREY;
+                    break;
+                }
+            case MassageHandler::VERBOSE_DEBUG:
+                {
+                    $color = self::BG_YELLOW;
+                    break;
+                }
+            default:
+                {
+                    $color = self::BG_GREY;
+                }
         }
         return $color;
     }
 
-
+    /**
+     * @param $level
+     * @return bool
+     */
     public function verbose($level)
     {
         return in_array($level, $this->levels);
     }
 
+    /**
+     * @param $msg
+     * @param $code
+     * @param $level
+     */
     public function send($msg, $code, $level)
     {
         $this->consolePrint($code, $msg, $this->getColorByLevel($level));
@@ -132,7 +147,7 @@ class ConsoleHandler implements MessengerInterface
      */
     protected function consolePrint($code, $message = null, $color = ConsoleHandler::FG_GREEN)
     {
-        $message = $this->ansiFormat('Code: ' . $code, [$color]) . "\n"  . $this->ansiFormat($message, [$color]) . "\n";
+        $message = $this->ansiFormat('Code: ' . $code, [$color]) . "\n" . $this->ansiFormat($message, [$color]) . "\n";
         $this->stdout($message);
     }
 
