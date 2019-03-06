@@ -87,8 +87,9 @@ class QueueController
      */
     protected function initializeMessengers($config)
     {
-        MassageHandler::send('Initialize massage handler', 0, MassageHandler::VERBOSE_NOTICE);
         MassageHandler::setMessengers($config);
+        MassageHandler::send('Initialize massage handler', 0, MassageHandler::VERBOSE_NOTICE);
+      
         return true;
     }
 
