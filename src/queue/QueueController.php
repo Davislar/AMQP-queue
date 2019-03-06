@@ -89,6 +89,7 @@ class QueueController
     {
         MassageHandler::setMessengers($config);
         MassageHandler::send('Initialize massage handler', 0, MassageHandler::VERBOSE_NOTICE);
+      
         return true;
     }
 
