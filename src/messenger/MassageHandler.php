@@ -23,14 +23,16 @@ class MassageHandler
      * @param array $messengers
      * @throws \Exception
      */
-    public static function setMessengers(array $messengers)
+    public static function setMessengers(array $messengers = [])
     {
-        foreach ($messengers as $messenger) {
-            if (!is_array($messenger) || !isset($messenger['class']) || !isset($messenger['config'])) {
-                throw new \Exception('Not valid config MassageHandler');
+        if (is_array($messengers)){
+            foreach ($messengers as $messenger) {
+                if (!is_array($messenger) || !isset($messenger['class']) || !isset($messenger['config'])) {
+                    throw new \Exception('Not valid config MassageHandler');
+                }
+                $messengerObj = new $messenger['class']($messenger['config']);
+                self::addMessenger($messengerObj);
             }
-            $messengerObj = new $messenger['class']($messenger['config']);
-            self::addMessenger($messengerObj);
         }
     }
 
