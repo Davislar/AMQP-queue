@@ -169,7 +169,7 @@ class Connector
      */
     protected static function newConsumer($consumer)
     {
-        if (self::checkOnProcess($consumer)){
+        if (self::checkOnProcess($consumer)) {
             return true;
         }
 
@@ -189,26 +189,54 @@ class Connector
     protected static function checkOnProcess($consumer)
     {
         $pid_file = self::getPidPath($consumer['name']);
-        if (file_exists($pid_file)) {
 
-            MassageHandler::send('file_exists ' . $pid_file, 0, MassageHandler::VERBOSE_NOTICE);
-            $pid = file_get_contents($pid_file);
-            MassageHandler::send('PID: ' . $pid, 0, MassageHandler::VERBOSE_NOTICE);
-
-            if (self::isProcessRunning($pid)) {
-                if ($consumer['enabled']) {
-                    MassageHandler::send('Daemon ' . $consumer['name'] . ' running and working fine', 0, MassageHandler::VERBOSE_NOTICE);
-
-                    return true;
-                } else {
-                    self::stopDaemonProcess($consumer, $pid);
-
-                    return true;
-                }
-            }
+        if (!file_exists($pid_file)) {
+            return false;
         }
 
+        $pid = file_get_contents($pid_file);
+
+        $runingPids = self::getRuningPids($consumer);
+        $exist = false;
+
+        foreach ($runingPids as $runingPid) {
+            if ((int)$pid !== (int)$runingPid) {
+                self::stopDaemonProcess($consumer, $runingPid);
+                continue;
+            }
+
+            $exist = true;
+        }
+
+        if (!$consumer['enabled'] && $exist) {
+            self::stopDaemonProcess($consumer, $pid);
+
+            return true;
+
+        }
+
+        if ($consumer['enabled'] && $exist) {
+            MassageHandler::send('Daemon ' . $consumer['name'] . ' running and working fine', 0, MassageHandler::VERBOSE_NOTICE);
+            MassageHandler::send('PID: ' . $pid, 0, MassageHandler::VERBOSE_NOTICE);
+
+            return true;
+
+        }
+
+
         return false;
+    }
+
+    protected static function getRuningPids($consumer)
+    {
+        $command = "pidof {$consumer['name']}";
+        $pids = shell_exec($command);
+
+        if ($pids == null) {
+            return [];
+        }
+
+        return explode(' ', $pids);
     }
 
     /**
@@ -274,7 +302,8 @@ class Connector
      * @param $consumer
      * @throws Exception
      */
-    protected static function startConsumer($consumer){
+    protected static function startConsumer($consumer)
+    {
         self::changeProcessName($consumer['name']);
         $pidJob = file_get_contents(self::getPidPath($consumer['name']));
         Connector::createConnection($consumer);
